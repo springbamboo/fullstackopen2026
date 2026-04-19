@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import axios from 'axios'
+import phonebookService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -17,7 +17,7 @@ const App = () => {
     if(isExist) {
       alert(`${newPerson.name} is already added to phonebook`)
     } else {
-      axios.post("http://localhost:3001/persons", {name: newPerson.name, number: newPerson.number}).then(response => persons.concat(response.data))
+      phonebookService.addOne({name: newPerson.name, number: newPerson.number}).then(response => persons.concat(response.data))
       setPersons(persons.concat({name: newPerson.name, number: newPerson.number}))
       setNewPerson({ name: '', number: '' })
     }
@@ -33,7 +33,7 @@ const App = () => {
   }
 
   useEffect(()=> {
-    axios.get("http://localhost:3001/persons").then(response => setPersons(response.data))
+    phonebookService.getAll().then(response => setPersons(response.data))
   }, [])
 
 
