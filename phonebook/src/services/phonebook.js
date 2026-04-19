@@ -9,7 +9,11 @@ const addOne = (newObject) => {
   return axios.post(baseUrl, newObject);
 };
 
+const deleteOne = (id) => {
+  return axios.delete(baseUrl + `/${id}`);
+};
 export default {
   getAll: getAll,
   addOne: addOne,
+  deleteOne: deleteOne,
 };

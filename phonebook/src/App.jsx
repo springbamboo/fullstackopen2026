@@ -5,10 +5,8 @@ import Persons from './components/Persons'
 import phonebookService from './services/phonebook'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '39-44-12345'}
-  ])
-  const [newPerson, setNewPerson] = useState({ name: '', number: ''})
+  const [persons, setPersons] = useState([])
+  const [newPerson, setNewPerson] = useState({ name: '', number: '', id: ''})
   const [filterTerm, setFilterTerm] = useState('')
 
   const addPerson = (event) => {
@@ -17,9 +15,10 @@ const App = () => {
     if(isExist) {
       alert(`${newPerson.name} is already added to phonebook`)
     } else {
-      phonebookService.addOne({name: newPerson.name, number: newPerson.number}).then(response => persons.concat(response.data))
-      setPersons(persons.concat({name: newPerson.name, number: newPerson.number}))
-      setNewPerson({ name: '', number: '' })
+      phonebookService.addOne({name: newPerson.name, number: newPerson.number}).then(response => {
+        setPersons(persons.concat(response.data))
+      })
+      setNewPerson({ name: '', number: '', id: '' })
     }
   }
 
@@ -36,7 +35,11 @@ const App = () => {
     phonebookService.getAll().then(response => setPersons(response.data))
   }, [])
 
-
+  const handleDelete = (id) => {
+    if(window.confirm("Delete "+`${persons.find(p => p.id === id).name}` + " ?")){
+      phonebookService.deleteOne(id).then(() => setPersons(persons.filter(p => p.id !== id)));
+    }
+  }
 
   return (
     <div>
@@ -45,7 +48,7 @@ const App = () => {
       <h3>add a new</h3>
       <PersonForm addPerson={addPerson} newPerson={newPerson} inputChange={inputChange}/>
       <h3>Numbers</h3>
-      <Persons persons={persons} filterTerm={filterTerm}/>
+      <Persons persons={persons} filterTerm={filterTerm} handleDelete={handleDelete}/>
     </div>
   )
 }
