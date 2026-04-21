@@ -11,12 +11,21 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    const isExist = persons.some(p => p.name === newPerson.name)
-    if(isExist) {
+    const existPerson = persons.find(p => p.name === newPerson.name)
+    if(existPerson && existPerson.number == newPerson.number) {
       alert(`${newPerson.name} is already added to phonebook`)
-    } else {
+      setNewPerson({ name: '', number: '', id: '' })
+    } 
+    if(!existPerson){
       phonebookService.addOne({name: newPerson.name, number: newPerson.number}).then(response => {
         setPersons(persons.concat(response.data))
+      })
+      setNewPerson({ name: '', number: '', id: '' })
+    }
+    if(existPerson && existPerson.number !== newPerson.number){
+      alert(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)
+      phonebookService.update(existPerson.id, newPerson).then((response) => {
+        setPersons(persons.map(p => p.name === newPerson.name ? {...p, number: response.data.number}: p))
       })
       setNewPerson({ name: '', number: '', id: '' })
     }
