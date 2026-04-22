@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import phonebookService from './services/phonebook'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newPerson, setNewPerson] = useState({ name: '', number: '', id: ''})
   const [filterTerm, setFilterTerm] = useState('')
+  const [message, setmessage] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -19,6 +22,8 @@ const App = () => {
     if(!existPerson){
       phonebookService.addOne({name: newPerson.name, number: newPerson.number}).then(response => {
         setPersons(persons.concat(response.data))
+        setmessage(`added ${newPerson.name}`)
+        // setTimeout(()=>{setmessage(null)}, 3000);
       })
       setNewPerson({ name: '', number: '', id: '' })
     }
@@ -53,6 +58,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {message ? <Notification message={message}/>: null}
       <Filter filterTerm={filterTerm} getFilter={getFilter}/>
       <h3>add a new</h3>
       <PersonForm addPerson={addPerson} newPerson={newPerson} inputChange={inputChange}/>
