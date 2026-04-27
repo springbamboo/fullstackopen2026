@@ -9,7 +9,6 @@ async function getAll() {
 async function getByName(name) {
     const endpoint = `api/name/${name}`;
     const res = await fetch(baseUrl + endpoint);
-    console.log(res.json);
     return res.json();
 }
 
