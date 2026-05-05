@@ -2,7 +2,7 @@ import express from 'express';
 
 const app = express();
 
-const phoneBookList = [
+let phoneBookList = [
   {
     id: '1',
     name: 'Arto Hellas',
@@ -46,6 +46,12 @@ app.get('/api/persons/:id', (request, response) => {
   } else {
     response.status(404).end();
   }
+});
+
+app.delete('/api/persons/:id', (request, response) => {
+  const id = request.params.id;
+  phoneBookList = phoneBookList.filter((item) => item.id !== id);
+  response.status(204).end();
 });
 
 const PORT = 3001;
