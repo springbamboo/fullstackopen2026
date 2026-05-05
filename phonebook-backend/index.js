@@ -2,7 +2,7 @@ import express from 'express';
 
 const app = express();
 
-const phonebook = [
+const phoneBookList = [
   {
     id: '1',
     name: 'Arto Hellas',
@@ -25,17 +25,27 @@ const phonebook = [
   },
 ];
 app.get('/api/persons', (request, response) => {
-  response.json(phonebook);
+  response.json(phoneBookList);
 });
 
 app.get('/info', (request, response) => {
   const date = new Date();
   const content = `
-    <p>Phonebook has info for ${phonebook.length} people</p>
+    <p>Phonebook has info for ${phoneBookList.length} people</p>
     <p>${date}</p>
   `;
 
   response.send(content);
+});
+
+app.get('/api/persons/:id', (request, response) => {
+  const id = request.params.id;
+  const person = phoneBookList.find((item) => item.id === id);
+  if (person) {
+    response.json(person);
+  } else {
+    response.status(404).end();
+  }
 });
 
 const PORT = 3001;
