@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 phonebook/db.json
 phonebook/db.json
 .vscode/launch.json
+phonebook-backend/Dockerfile
+phonebook-backend/request.rest
+.vscode/settings.json
