@@ -2,6 +2,8 @@ import express from 'express';
 
 const app = express();
 
+app.use(express.json());
+
 let phoneBookList = [
   {
     id: '1',
@@ -52,6 +54,13 @@ app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id;
   phoneBookList = phoneBookList.filter((item) => item.id !== id);
   response.status(204).end();
+});
+
+app.post('/api/persons/', (request, response) => {
+  const new_entry = request.body;
+  new_entry.id = Math.floor(Math.random() * 1000);
+  phoneBookList = phoneBookList.concat(new_entry);
+  response.json(new_entry);
 });
 
 const PORT = 3001;
