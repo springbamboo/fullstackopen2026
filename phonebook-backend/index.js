@@ -4,6 +4,14 @@ const app = express();
 
 app.use(express.json());
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+  if (error.name === 'ValidationError') {
+    return response.status(400).json({error: error.message});
+  }
+  next(error);
+};
+
 let phoneBookList = [
   {
     id: '1',
@@ -56,12 +64,38 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end();
 });
 
-app.post('/api/persons/', (request, response) => {
-  const new_entry = request.body;
-  new_entry.id = Math.floor(Math.random() * 1000);
-  phoneBookList = phoneBookList.concat(new_entry);
-  response.json(new_entry);
+app.post('/api/persons/', (request, response, next) => {
+  const body = request.body;
+
+  if (!body.name) {
+    const error = new Error('name is missing');
+    error.name = 'ValidationError';
+    return next(error);
+  }
+
+  if (!body.number) {
+    const error = new Error('number is missing');
+    error.name = 'ValidationError';
+    return next(error);
+  }
+
+  if (phoneBookList.find((p) => p.name === body.name)) {
+    const error = new Error('name must be unique');
+    error.name = 'ValidationError';
+    return next(error);
+  }
+
+  const newEntry = {
+    name: body.name,
+    number: body.number,
+    id: Math.floor(Math.random() * 10000),
+  };
+
+  phoneBookList = phoneBookList.concat(newEntry);
+  response.json(newEntry);
 });
+
+app.use(errorHandler);
 
 const PORT = 3001;
 app.listen(PORT, () => {
