@@ -15,18 +15,12 @@ app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :body'),
 );
 
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
-  if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message});
-  }
-  next(error);
-};
-
 app.get('/api/persons', (request, response) => {
-  Person.find({}).then((result) => {
-    response.json(result);
-  });
+  Person.find({})
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
 app.get('/info', (request, response) => {
@@ -49,10 +43,12 @@ app.get('/api/persons/:id', (request, response) => {
   }
 });
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = request.params.id;
-  phoneBookList = phoneBookList.filter((item) => item.id !== id);
-  response.status(204).end();
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(() => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 app.post('/api/persons', (request, response, next) => {
@@ -74,10 +70,21 @@ app.post('/api/persons', (request, response, next) => {
     number: body.number,
   });
 
-  newPerson.save().then((result) => {
-    response.json(result);
-  });
+  newPerson
+    .save()
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+  if (error.name === 'ValidationError') {
+    return response.status(400).json({error: error.message});
+  }
+  next(error);
+};
 
 app.use(errorHandler);
 
