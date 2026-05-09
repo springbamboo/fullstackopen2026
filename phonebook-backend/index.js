@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import Person from './modules/phonebook.js';
 
 const app = express();
 
@@ -22,30 +23,10 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 };
 
-let phoneBookList = [
-  {
-    id: '1',
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: '2',
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: '3',
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: '4',
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-];
 app.get('/api/persons', (request, response) => {
-  response.json(phoneBookList);
+  Person.find({}).then((result) => {
+    response.json(result);
+  });
 });
 
 app.get('/info', (request, response) => {
@@ -88,20 +69,14 @@ app.post('/api/persons', (request, response, next) => {
     return next(error);
   }
 
-  if (phoneBookList.find((p) => p.name === body.name)) {
-    const error = new Error('name must be unique');
-    error.name = 'ValidationError';
-    return next(error);
-  }
-
-  const newEntry = {
+  const newPerson = new Person({
     name: body.name,
     number: body.number,
-    id: Math.floor(Math.random() * 10000),
-  };
+  });
 
-  phoneBookList = phoneBookList.concat(newEntry);
-  response.json(newEntry);
+  newPerson.save().then((result) => {
+    response.json(result);
+  });
 });
 
 app.use(errorHandler);
