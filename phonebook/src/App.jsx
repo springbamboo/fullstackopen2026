@@ -29,9 +29,12 @@ const App = () => {
             setmessage({text: '', type: ''});
           }, 3000);
         })
-        .catch((error) =>
-          setmessage({text: error.response.data.error, type: 'error'}),
-        );
+        .catch((error) => {
+          setmessage({text: error.response.data.error, type: 'error'});
+          setTimeout(() => {
+            setmessage({text: '', type: ''});
+          }, 3000);
+        });
       setNewPerson({name: '', number: '', id: ''});
     }
     if (existPerson && existPerson.number !== newPerson.number) {
@@ -47,15 +50,17 @@ const App = () => {
             ),
           );
         })
-        .catch(() => {
+        .catch((error) => {
           setmessage({
-            text: `Information of ${existPerson.name} has already been removed from server`,
+            text: error.response.data.error,
             type: 'error',
           });
           setTimeout(() => {
-            setmessage(null);
+            setmessage({
+              text: '',
+              type: '',
+            });
           }, 3000);
-          setPersons(persons.filter((p) => p.id !== existPerson.id));
         });
       setNewPerson({name: '', number: '', id: ''});
     }
