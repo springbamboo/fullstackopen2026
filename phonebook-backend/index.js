@@ -78,6 +78,17 @@ app.post('/api/persons', (request, response, next) => {
     .catch((error) => next(error));
 });
 
+app.put('/api/persons/:id', (request, response, next) => {
+  Person.updateOne(
+    {_id: request.params.id},
+    {$set: {number: request.body.number}},
+  )
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
+});
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
   if (error.name === 'ValidationError') {
