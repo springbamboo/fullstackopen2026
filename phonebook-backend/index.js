@@ -23,24 +23,23 @@ app.get('/api/persons', (request, response) => {
     .catch((error) => next(error));
 });
 
-app.get('/info', (request, response) => {
-  const date = new Date();
-  const content = `
-    <p>Phonebook has info for ${phoneBookList.length} people</p>
-    <p>${date}</p>
-  `;
-
-  response.send(content);
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then((count) => {
+      response.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${new Date()}</p>
+      `);
+    })
+    .catch((error) => next(error));
 });
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id;
-  const person = phoneBookList.find((item) => item.id === id);
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  Person.find({_id: request.params.id})
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
 app.delete('/api/persons/:id', (request, response, next) => {
