@@ -28,7 +28,10 @@ const App = () => {
           setTimeout(() => {
             setmessage({text: '', type: ''});
           }, 3000);
-        });
+        })
+        .catch((error) =>
+          setmessage({text: error.response.data.error, type: 'error'}),
+        );
       setNewPerson({name: '', number: '', id: ''});
     }
     if (existPerson && existPerson.number !== newPerson.number) {

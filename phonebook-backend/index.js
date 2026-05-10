@@ -81,6 +81,7 @@ app.put('/api/persons/:id', (request, response, next) => {
   Person.updateOne(
     {_id: request.params.id},
     {$set: {number: request.body.number}},
+    {runValidators: true},
   )
     .then((result) => {
       response.json(result);
