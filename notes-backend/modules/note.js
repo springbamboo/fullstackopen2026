@@ -1,17 +1,4 @@
 import mongoose from 'mongoose';
-import 'dotenv/config';
-
-mongoose.set('strictQuery', false);
-const url = process.env.MONGODB_URI;
-
-mongoose
-  .connect(url, { family: 4 })
-  .then(() => {
-    console.log('connected to MongoDB');
-  })
-  .catch((error) => {
-    console.log('error connecting to MongoDB:', error.message);
-  });
 
 const noteSchema = new mongoose.Schema({
   content: {
@@ -20,6 +7,10 @@ const noteSchema = new mongoose.Schema({
     required: true,
   },
   important: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 noteSchema.set('toJSON', {
@@ -30,4 +21,6 @@ noteSchema.set('toJSON', {
   },
 });
 
-export const Note = mongoose.model('Note', noteSchema);
+const Note = mongoose.model('Note', noteSchema);
+
+export {Note};

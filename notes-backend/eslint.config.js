@@ -7,7 +7,7 @@ export default [
   {
     files: ['**/*.js'],
     languageOptions: {
-      globals: { ...globals.node },
+      globals: {...globals.node},
       ecmaVersion: 'latest',
     },
     plugins: {
@@ -20,8 +20,8 @@ export default [
       '@stylistic/js/semi': ['error', 'always'],
       eqeqeq: 'error',
       'no-trailing-spaces': 'error',
-      'object-curly-spacing': ['error', 'always'],
-      'arrow-spacing': ['error', { before:true,after:true }],
+      // 'object-curly-spacing': ['error', 'always'],
+      'arrow-spacing': ['error', {before: true, after: true}],
     },
   },
   {
