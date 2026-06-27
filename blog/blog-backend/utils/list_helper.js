@@ -1,3 +1,4 @@
+import lodash from 'lodash';
 const dummy = (blogs) => {
   return 1;
 };
@@ -13,4 +14,25 @@ const favoriteBlog = (blogs) => {
     blogs[0],
   );
 };
-export {dummy, totalLikes, favoriteBlog};
+
+const mostBlogs = (blogs) => {
+  const authorBlogsObj = lodash.countBy(blogs, 'author');
+  const authorBlogsObjToArray = lodash.map(authorBlogsObj, (count, author) => ({
+    author: author,
+    blogs: count,
+  }));
+  const mostBlog = lodash.maxBy(authorBlogsObjToArray, 'author');
+  return mostBlog;
+};
+
+const mostFavorite = (blogs) => {
+  const authorBlogsObj = lodash.groupBy(blogs, 'author');
+  const authorLikesArray = lodash.map(authorBlogsObj, (blog, author) => ({
+    author: author,
+    likes: lodash.sumBy(blog, 'likes'),
+  }));
+  const authorLikes = lodash.maxBy(authorLikesArray, 'likes');
+  return authorLikes;
+};
+
+export {dummy, totalLikes, favoriteBlog, mostBlogs, mostFavorite};
