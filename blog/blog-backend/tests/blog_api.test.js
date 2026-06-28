@@ -43,6 +43,18 @@ test('the /api/blogs URL successfully creates a new blog post', async () => {
   assert(blogTitles.includes("today's weather"));
 });
 
+test('if the likes property is missing from the request, it will default to the value 0', async () => {
+  const response = await api
+    .post('/api/blogs')
+    .send({
+      title: "today's weather2",
+      author: 'john',
+      url: 'www',
+    })
+    .expect(201);
+  assert.equal(response.body.likes, 0);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
