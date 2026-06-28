@@ -1,7 +1,6 @@
 import {test, describe} from 'node:test';
 import assert, {strictEqual} from 'node:assert';
 import * as listHelper from '../utils/list_helper.js';
-import {log} from 'node:console';
 
 test('dummy returns one', () => {
   const blogs = [];
