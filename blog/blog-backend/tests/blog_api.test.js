@@ -1,5 +1,5 @@
 import supertest from 'supertest';
-import {test, beforeEach, after, before} from 'node:test';
+import {test, beforeEach, after, before, describe} from 'node:test';
 import assert from 'node:assert';
 import * as helper from '../utils/list_helper.js';
 import mongoose from 'mongoose';
@@ -53,6 +53,37 @@ test('if the likes property is missing from the request, it will default to the 
     })
     .expect(201);
   assert.equal(response.body.likes, 0);
+});
+
+describe('if the title or url properties are missing from the request data, the backend responds to the request with the status code 400 Bad Request', () => {
+  test('missing title', async () => {
+    const newBlog = {
+      author: 'Tester',
+      url: 'http://test.com',
+      likes: 5,
+    };
+
+    await api.post('/api/blogs').send(newBlog).expect(400);
+  });
+
+  test('missing url', async () => {
+    const newBlog = {
+      title: 'Missing URL Blog',
+      author: 'Tester',
+      likes: 5,
+    };
+
+    await api.post('/api/blogs').send(newBlog).expect(400);
+  });
+
+  test('missing title and url', async () => {
+    const newBlog = {
+      author: 'Tester',
+      likes: 5,
+    };
+
+    await api.post('/api/blogs').send(newBlog).expect(400);
+  });
 });
 
 after(async () => {
