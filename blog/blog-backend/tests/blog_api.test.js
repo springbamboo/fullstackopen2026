@@ -86,6 +86,11 @@ describe('if the title or url properties are missing from the request data, the 
   });
 });
 
+test('delete by id', async () => {
+  const blogID = helper.initialBlog[0]._id;
+  await api.delete(`/api/blogs/${blogID}`).send().expect(204);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
