@@ -1,4 +1,4 @@
-import express, {request} from 'express';
+import express from 'express';
 import Blog from '../modules/blog.js';
 
 const blogRouter = express.Router();
@@ -23,9 +23,27 @@ blogRouter.post('/', (request, response) => {
 
 blogRouter.delete('/:id', async (request, response) => {
   const blogID = request.params.id;
-  console.log('blogID', blogID);
   await Blog.findByIdAndDelete(blogID);
   return response.status(204).end();
+});
+
+blogRouter.put('/:id', async (request, response, next) => {
+  const blogID = request.params.id;
+  const body = request.body;
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(blogID, body, {
+      returnDocument: 'after',
+    });
+
+    if (updatedBlog) {
+      response.status(200).json(updatedBlog);
+    } else {
+      response.status(404).json({error: 'blog not found'});
+    }
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default blogRouter;

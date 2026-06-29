@@ -13,7 +13,7 @@ const unknownEndpoint = (request, response) => {
 };
 
 const errorHandler = (error, request, response, next) => {
-  logger.error(error.message);
+  response.status(404).send({error: error.message});
   next(error);
 };
 

@@ -91,6 +91,15 @@ test('delete by id', async () => {
   await api.delete(`/api/blogs/${blogID}`).send().expect(204);
 });
 
+test('update by id', async () => {
+  const blogID = helper.initialBlog[0]._id;
+  const response = await api
+    .put(`/api/blogs/${blogID}`)
+    .send({likes: 100})
+    .expect(200);
+  assert.equal(response.body.likes, 100);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
