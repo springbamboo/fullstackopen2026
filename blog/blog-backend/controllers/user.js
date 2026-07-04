@@ -11,6 +11,12 @@ userRouter.get('/', async (request, response, next) => {
 
 userRouter.post('/', async (request, response, next) => {
   const {name, username, password} = request.body;
+
+  if (password.length < 3) {
+    return response
+      .status(400)
+      .json({error: 'the length of password should be more than 3'});
+  }
   if (!(name && username && password)) {
     return response
       .status(400)
