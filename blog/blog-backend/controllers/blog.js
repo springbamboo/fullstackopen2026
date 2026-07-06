@@ -1,11 +1,15 @@
 import express from 'express';
 import Blog from '../modules/blog.js';
+import User from '../modules/user.js';
 
 const blogRouter = express.Router();
 
 blogRouter.get('/', async (request, response, next) => {
   try {
-    const allBlogs = await Blog.find({});
+    const allBlogs = await Blog.find({}).populate('user', {
+      username: 1,
+      name: 1,
+    });
     return response.status(200).json(allBlogs);
   } catch (error) {
     next(error);
@@ -13,16 +17,25 @@ blogRouter.get('/', async (request, response, next) => {
 });
 
 blogRouter.post('/', async (request, response, next) => {
-  const blog = new Blog({...request.body, likes: request.body.likes ?? 0});
+  const body = request.body;
 
   if (!(request.body.title && request.body.url)) {
     return response.status(400).json({error: 'title and url are required'});
   }
 
   try {
-    blog.save().then((result) => {
-      response.status(201).json(result);
+    const user = await User.findOne({});
+    const blog = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes ?? 0,
+      user: user._id,
     });
+    const result = await blog.save();
+    user.blogs = user.blogs.concat(result.id);
+    await user.save();
+    return response.status(201).json(result);
   } catch (error) {
     next(error);
   }

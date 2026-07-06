@@ -5,8 +5,15 @@ import User from '../modules/user.js';
 const userRouter = express.Router();
 
 userRouter.get('/', async (request, response, next) => {
-  const users = await User.find({});
-  return response.status(200).json(users);
+  try {
+    const users = await User.find({}).populate('blogs', {
+      title: 1,
+      author: 1,
+    });
+    return response.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
 });
 
 userRouter.post('/', async (request, response, next) => {
