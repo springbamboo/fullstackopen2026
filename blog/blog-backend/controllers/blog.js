@@ -1,4 +1,6 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
+
 import Blog from '../modules/blog.js';
 import User from '../modules/user.js';
 
@@ -16,29 +18,40 @@ blogRouter.get('/', async (request, response, next) => {
   }
 });
 
+const getTokenFrom = (request) => {
+  const authorization = request.get('authorization');
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '');
+  }
+  return null;
+};
+
 blogRouter.post('/', async (request, response, next) => {
   const body = request.body;
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
+  if (!decodedToken.id) {
+    return response.status(401).json({error: 'token invalid'});
+  }
 
   if (!(request.body.title && request.body.url)) {
     return response.status(400).json({error: 'title and url are required'});
   }
 
-  try {
-    const user = await User.findOne({});
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes ?? 0,
-      user: user._id,
-    });
-    const result = await blog.save();
-    user.blogs = user.blogs.concat(result.id);
-    await user.save();
-    return response.status(201).json(result);
-  } catch (error) {
-    next(error);
+  const user = await User.findById(decodedToken.id);
+  if (!user) {
+    return response.status(400).json({error: 'UserId missing or not valid'});
   }
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes ?? 0,
+    user: user._id,
+  });
+  const result = await blog.save();
+  user.blogs = user.blogs.concat(result.id);
+  await user.save();
+  return response.status(201).json(result);
 });
 
 blogRouter.delete('/:id', async (request, response, next) => {
