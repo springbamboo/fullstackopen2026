@@ -5,6 +5,7 @@ import * as logger from './utils/logger.js';
 import * as middleware from './utils/middleware.js';
 import blogRouter from './controllers/blog.js';
 import userRouter from './controllers/user.js';
+import loginRouter from './controllers/login.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', userRouter);
+app.use('/api/login', loginRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
