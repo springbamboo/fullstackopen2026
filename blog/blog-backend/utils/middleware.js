@@ -1,4 +1,6 @@
 import * as logger from './logger.js';
+import User from '../modules/user.js';
+import jwt from 'jsonwebtoken';
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method);
@@ -27,4 +29,25 @@ const tokenExtractor = (request, response, next) => {
   next();
 };
 
-export {requestLogger, unknownEndpoint, errorHandler, tokenExtractor};
+const userExtractor = async (request, response, next) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+
+  if (!decodedToken.id) {
+    response.status(401).json({error: 'token invalid'});
+  }
+  const user = await User.findById(decodedToken.id);
+  if (user) {
+    request.user = user;
+  } else {
+    response.status(404).json({error: 'User not found'});
+  }
+  next();
+};
+
+export {
+  requestLogger,
+  unknownEndpoint,
+  errorHandler,
+  tokenExtractor,
+  userExtractor,
+};
