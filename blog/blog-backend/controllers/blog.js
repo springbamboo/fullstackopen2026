@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import Blog from '../modules/blog.js';
 import User from '../modules/user.js';
 
+import {userExtractor} from '../utils/middleware.js';
+
 const blogRouter = express.Router();
 
 blogRouter.get('/', async (request, response, next) => {
@@ -18,7 +20,7 @@ blogRouter.get('/', async (request, response, next) => {
   }
 });
 
-blogRouter.post('/', async (request, response, next) => {
+blogRouter.post('/', userExtractor, async (request, response, next) => {
   const body = request.body;
   if (!(request.body.title && request.body.url)) {
     return response.status(400).json({error: 'title and url are required'});
@@ -37,7 +39,7 @@ blogRouter.post('/', async (request, response, next) => {
   return response.status(201).json(result);
 });
 
-blogRouter.delete('/:id', async (request, response, next) => {
+blogRouter.delete('/:id', userExtractor, async (request, response, next) => {
   const user = request.user;
   const blogID = request.params.id;
   const blogAuthor = await Blog.findById(blogID);

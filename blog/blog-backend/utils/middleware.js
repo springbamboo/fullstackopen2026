@@ -30,17 +30,30 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const userExtractor = async (request, response, next) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  if (!request.token) {
+    return response.status(401).json({error: 'token missing'});
+  }
 
-  if (!decodedToken.id) {
-    response.status(401).json({error: 'token invalid'});
+  try {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    if (!decodedToken.id) {
+      return response.status(401).json({error: 'token invalid'});
+    }
+
+    request.user = await User.findById(decodedToken.id);
+    if (!request.user) {
+      return response.status(401).json({error: 'user not found'});
+    }
+  } catch (error) {
+    if (
+      error.name === 'JsonWebTokenError' ||
+      error.name === 'TokenExpiredError'
+    ) {
+      return response.status(401).json({error: 'token invalid or expired'});
+    }
+    return next(error);
   }
-  const user = await User.findById(decodedToken.id);
-  if (user) {
-    request.user = user;
-  } else {
-    response.status(404).json({error: 'User not found'});
-  }
+
   next();
 };
 

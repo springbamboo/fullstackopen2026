@@ -11,7 +11,9 @@ const app = express();
 
 mongoose
   .connect(config.MONGO_URI, {family: 4})
-  .then(logger.info('connected to the mongodb'))
+  .then(() => {
+    logger.info('connected to the mongodb');
+  })
   .catch((error) => {
     logger.error('error connection to MongoDB', error.message);
   });
@@ -19,7 +21,7 @@ mongoose
 app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
-app.use('/api/blogs', middleware.userExtractor, blogRouter);
+app.use('/api/blogs', blogRouter);
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
 app.use(middleware.unknownEndpoint);
