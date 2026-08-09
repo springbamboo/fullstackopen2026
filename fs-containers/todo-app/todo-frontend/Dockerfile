@@ -1,13 +1,14 @@
 FROM node:24 AS test-stage
 WORKDIR /usr/src/app
 
-COPY . .
+COPY package*.json ./
 RUN npm ci
 
+COPY . .
 RUN npm run test
 
 FROM test-stage AS build-stage
-ENV VITE_BACKEND_URL=http://localhost:3000
+ENV VITE_BACKEND_URL=/api
 RUN npm run build
 
 
