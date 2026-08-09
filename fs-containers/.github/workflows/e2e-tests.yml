@@ -3,6 +3,7 @@ name: E2E Tests
 on:
   push:
     branches: [ main, master, part12]
+  workflow_dispatch:
 
 jobs:
   e2e-tests:
