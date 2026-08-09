@@ -1,6 +1,0 @@
-services:
-  app:
-    image: express-server
-    build: .
-    ports:
-      - 3000:3000

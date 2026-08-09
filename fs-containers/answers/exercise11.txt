@@ -1,5 +1,0 @@
-docker exec -it e7f2 redis-cli
-keys *
-get added_todos
-set added_todos 9001
-del added_todos
