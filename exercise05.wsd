@@ -1,0 +1,19 @@
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server-->browser: HTTP 304 Not Modified
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: HTTP 304 Not Modified
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server-->browser: HTTP 304 Not Modified
+
+note over browser:
+browser starts executing js-code
+that requests JSON data from server
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: [{"content": "test it", "date": "2026-04-04T17:43:36.525Z"},...]
+
+note over browser:
+browser executes the event handler
+that renders notes to display
+end note

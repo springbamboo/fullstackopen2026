@@ -1,0 +1,3 @@
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+browser->server: {content: "good", date: "2026-04-05T18:12:00.272Z"}
+server-->browser: 201 Created {message: "note created"}
